@@ -1,6 +1,8 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 public class TextEditor implements ActionListener {
     JFrame frame;
@@ -14,6 +16,7 @@ public class TextEditor implements ActionListener {
         //Initialized this frame
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setBackground(Color.red);
 
         //Initialize Menu
         menuBar = new JMenuBar();
@@ -79,11 +82,48 @@ public class TextEditor implements ActionListener {
 
         }
         if(e.getSource()==saveFile){
+//            if(e.getSource()==saveFile){
+                JFileChooser fileChooser = new JFileChooser("C:");
+                fileChooser.setApproveButtonText("Save");
+                int chooseOption = fileChooser.showSaveDialog(null);
 
-        }
+                if(chooseOption== JFileChooser.APPROVE_OPTION){
+                    File file = new File(fileChooser.getSelectedFile().getAbsolutePath()+".txt");
+                    String filePath = file.getPath();
+                    try{
+                        BufferedWriter outfile = null;
+                        outfile = new BufferedWriter(new FileWriter(file));
+                        textArea.write(outfile);
+                        outfile.close();
+                    }catch (Exception exception){
+                        System.out.println(exception);
+                    }
+                }
+            }
+
+
+
         if(e.getSource()==openFile){
+            JFileChooser fileChooser = new JFileChooser("C:");
+            int chooseOption = fileChooser.showOpenDialog(null);
 
+            if(chooseOption== JFileChooser.APPROVE_OPTION){
+                File file  = fileChooser.getSelectedFile();
+                String filePath = file.getPath();
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath));
+                    String intermediate = "", output = "";
+                    while((intermediate = bufferedReader.readLine())!=null){
+                        output += intermediate+ "\n";
+                    }
+                    textArea.setText(output);
+
+                }catch (Exception exception){
+                    System.out.println(exception);
+                }
+            }
         }
+
         if(e.getSource()==cut){
             textArea.cut();
         }
